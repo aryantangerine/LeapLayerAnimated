@@ -5,6 +5,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
+import { Shader, ChromaFlow, FilmGrain, FlutedGlass, Swirl } from 'shaders/react';
 import {
   Menu, X, ArrowRight, Shield, MousePointer2, LayoutGrid,
   CheckCircle2, Clock, Zap, Target, Lock, ArrowDown,
@@ -87,6 +88,7 @@ const SectionHeading = ({
     )}
   </motion.div>
 );
+
 
 // --- Sections ---
 
@@ -233,48 +235,6 @@ const Navbar = ({ setView, currentView }: { setView: (v: 'home' | 'about') => vo
   );
 };
 
-const GridPulseLines = () => {
-  const lines = [
-    // Vertical lines (aligned to 4rem grid columns)
-    { isVertical: true, position: '16rem', duration: 4.5, delay: 0.5, direction: 'down' },
-    { isVertical: true, position: 'calc(100% - 12rem)', duration: 5.5, delay: 1.2, direction: 'up' },
-    { isVertical: true, position: '32rem', duration: 6, delay: 2.5, direction: 'down' },
-    { isVertical: true, position: 'calc(100% - 24rem)', duration: 4.2, delay: 0.2, direction: 'up' },
-
-    // Horizontal lines (aligned to 4rem grid rows)
-    { isVertical: false, position: '16rem', duration: 5, delay: 0.8, direction: 'right' },
-    { isVertical: false, position: 'calc(100% - 12rem)', duration: 4.8, delay: 2.1, direction: 'left' },
-    { isVertical: false, position: '28rem', duration: 6.5, delay: 3.5, direction: 'right' },
-  ];
-
-  return (
-    <div className="absolute inset-0 overflow-hidden pointer-events-none">
-      {lines.map((line, i) => (
-        <motion.div
-          key={i}
-          className="absolute"
-          style={{
-            opacity: 0.6,
-            ...(line.isVertical
-              ? { left: line.position, top: 0, width: '1px', height: '35%', background: 'linear-gradient(to bottom, transparent, #2DAC65, transparent)' }
-              : { top: line.position, left: 0, height: '1px', width: '35%', background: 'linear-gradient(to right, transparent, #2DAC65, transparent)' }),
-          }}
-          animate={{
-            ...(line.isVertical
-              ? { y: line.direction === 'down' ? ['-100%', '350%'] : ['350%', '-100%'] }
-              : { x: line.direction === 'right' ? ['-100%', '350%'] : ['350%', '-100%'] })
-          }}
-          transition={{
-            duration: line.duration,
-            repeat: Infinity,
-            repeatDelay: line.delay,
-            ease: "easeInOut"
-          }}
-        />
-      ))}
-    </div>
-  );
-};
 
 const Hero = () => {
   const words = "The Layer That Leaps Your Business Ahead".split(" ");
@@ -296,26 +256,40 @@ const Hero = () => {
 
   return (
     <section className="min-h-screen bg-page-bg flex items-center pt-40 pb-40 overflow-hidden relative">
-      {/* Vercel-style fading grid background & pulses */}
-      <div
-        className="absolute inset-0 z-0 pointer-events-none"
-        style={{
-          maskImage: 'radial-gradient(ellipse 60% 60% at 50% 50%, transparent 40%, black 100%)',
-          WebkitMaskImage: 'radial-gradient(ellipse 60% 60% at 50% 50%, transparent 40%, black 100%)'
-        }}
-      >
-        <div
-          className="absolute inset-0 opacity-[0.15]"
-          style={{
-            backgroundImage: `
-              linear-gradient(to right, #000 1px, transparent 1px),
-              linear-gradient(to bottom, #000 1px, transparent 1px)
-            `,
-            backgroundSize: '4rem 4rem'
-          }}
+      {/* WebGL shader background */}
+      <Shader className="absolute inset-0 z-0 pointer-events-none">
+        <Swirl colorA="#f0faf5" colorB="#c2e8d4" detail={1.7} />
+        <ChromaFlow
+          baseColor="#ffffff"
+          downColor="#2DAC65"
+          leftColor="#2DAC65"
+          momentum={13}
+          radius={3.5}
+          rightColor="#2DAC65"
+          upColor="#2DAC65"
         />
-        <GridPulseLines />
-      </div>
+        <FlutedGlass
+          aberration={0.61}
+          angle={31}
+          frequency={8}
+          highlight={0.12}
+          highlightSoftness={0}
+          lightAngle={-90}
+          refraction={4}
+          shape="rounded"
+          softness={1}
+          speed={0.15}
+        />
+        <FilmGrain strength={0.05} />
+      </Shader>
+
+      {/* White radial glow behind text for contrast against shader */}
+      <div
+        className="absolute inset-0 z-[5] pointer-events-none"
+        style={{
+          background: 'radial-gradient(ellipse 70% 80% at 50% 50%, rgba(245,245,240,0.95) 35%, rgba(245,245,240,0.65) 62%, transparent 100%)',
+        }}
+      />
 
       <div className="max-w-7xl mx-auto px-6 text-center relative z-10">
         <div className="z-10 max-w-5xl mx-auto">
@@ -369,7 +343,7 @@ const Hero = () => {
             transition={{ duration: 0.8, delay: 1 }}
             className="text-[#3A3A3A]/80 text-lg md:text-[1.3rem] max-w-2xl lg:max-w-4xl mx-auto mb-10 leading-[1.5] font-semibold"
           >
-            We implement proven AI systems that attract new customers, convert leads,<br className="hidden lg:block" />and give you a strategy built for serious growth, so you lead your market<br className="hidden lg:block" />instead of playing catchup.
+            We implement proven AI systems that attract new customers, convert leads, and give you<br className="hidden lg:block" />a strategy built for serious growth. Lead your market instead of playing catchup.
           </motion.p>
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -418,7 +392,7 @@ const Integrations = () => {
   ];
 
   return (
-    <section id="solutions" className="py-24 bg-black overflow-hidden relative z-10 -mt-20 rounded-t-[60px] md:rounded-t-[120px] shadow-[0_-20px_50px_-12px_rgba(0,0,0,0.3)]">
+    <section id="solutions" className="py-24 bg-black overflow-hidden relative z-20 -mt-20 rounded-t-[60px] md:rounded-t-[120px] shadow-[0_-20px_50px_-12px_rgba(0,0,0,0.3)]">
       <div className="max-w-7xl mx-auto px-6">
         <SectionHeading
           dark
@@ -524,61 +498,93 @@ const PropTechGraphic = () => {
   );
 };
 
-const FeatureCard = ({
-  badge,
-  image,
-  graphic,
-  title,
-  description,
-  delay = 0
+const FluidCardBg = ({
+  momentum = 13,
+  detail = 1.7,
+  mountDelay = 0,
 }: {
-  badge: string,
-  image?: string,
-  graphic?: React.ReactNode,
+  momentum?: number;
+  detail?: number;
+  mountDelay?: number;
+}) => {
+  const [ready, setReady] = useState(mountDelay === 0);
+
+  useEffect(() => {
+    if (mountDelay > 0) {
+      const t = setTimeout(() => setReady(true), mountDelay * 1000);
+      return () => clearTimeout(t);
+    }
+  }, [mountDelay]);
+
+  return (
+    <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-[1.8rem]">
+      {ready && (
+        <motion.div
+          className="absolute inset-0"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 1.2 }}
+        >
+          <Shader className="absolute inset-0">
+            <Swirl colorA="#f0faf5" colorB="#c2e8d4" detail={detail} />
+            <ChromaFlow
+              baseColor="#ffffff"
+              downColor="#2DAC65"
+              leftColor="#2DAC65"
+              momentum={momentum}
+              radius={0}
+              rightColor="#2DAC65"
+              upColor="#2DAC65"
+            />
+            <FilmGrain strength={0.05} />
+          </Shader>
+        </motion.div>
+      )}
+      <div
+        className="absolute inset-0"
+        style={{
+          background: 'linear-gradient(to bottom, white 58%, rgba(255,255,255,0.82) 70%, rgba(255,255,255,0.32) 83%, rgba(255,255,255,0.0) 94%, transparent 100%)',
+        }}
+      />
+    </div>
+  );
+};
+
+const FeatureCard = ({
+  title,
+  learnMore,
+  delay = 0,
+  momentum,
+  detail,
+  mountDelay,
+}: {
   title: string,
-  description: string,
-  delay?: number
+  learnMore?: boolean,
+  delay?: number,
+  momentum?: number,
+  detail?: number,
+  mountDelay?: number,
 }) => (
   <motion.div
     initial={{ opacity: 0, y: 20 }}
     whileInView={{ opacity: 1, y: 0 }}
     viewport={{ once: true }}
     transition={{ duration: 0.4, delay, ease: [0.23, 1, 0.32, 1] }}
-    whileHover={{
-      y: -10,
-      scale: 1.01,
-      transition: { type: "spring", stiffness: 400, damping: 15 }
-    }}
-    className="bg-white rounded-[2.5rem] p-4 shadow-[0_40px_80px_-15px_rgba(0,0,0,0.15)] border-[8px] border-page-bg flex flex-col h-full cursor-pointer group transition-shadow duration-500 hover:shadow-[0_50px_100px_-20px_rgba(0,0,0,0.2)]"
+    whileHover={{ y: -10, scale: 1.01, transition: { type: "spring", stiffness: 400, damping: 15 } }}
+    className="relative overflow-hidden bg-white rounded-[2.5rem] p-4 shadow-[0_40px_80px_-15px_rgba(0,0,0,0.15)] border-[8px] border-white flex flex-col cursor-pointer group transition-shadow duration-500 hover:shadow-[0_50px_100px_-20px_rgba(0,0,0,0.2)]"
   >
-    <div className="relative aspect-[4/3] rounded-[2rem] overflow-hidden bg-[#F9F9F9] flex items-center justify-center mb-4">
-      {graphic ? (
-        <div className="w-full h-full flex items-center justify-center">
-          {graphic}
-        </div>
-      ) : (
-        <motion.img
-          src={image}
-          alt={title}
-          className="w-full h-full object-cover"
-          whileHover={{ scale: 1.1 }}
-          transition={{ duration: 0.6 }}
-          referrerPolicy="no-referrer"
-        />
-      )}
-      <div className="absolute top-4 right-4 z-10">
-        <span className="bg-white/90 backdrop-blur-md px-4 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-widest text-heading border border-black/5">
-          {badge}
-        </span>
-      </div>
-    </div>
-    <div className="p-7 flex flex-col flex-grow">
-      <h3 className="text-[1.5rem] font-bold text-heading mb-3 leading-[1.2] tracking-tight group-hover:text-accent transition-colors">
+    <FluidCardBg momentum={momentum} detail={detail} mountDelay={mountDelay} />
+    <div className="relative z-10 p-7 flex flex-col">
+      <h3 className="text-[2rem] md:text-[2.2rem] font-bold text-heading mb-5 leading-[1.15] tracking-tight group-hover:text-accent transition-colors">
         {title}
       </h3>
-      <p className="text-[1.05rem] text-body/80 leading-relaxed font-semibold">
-        {description}
-      </p>
+      {learnMore && (
+        <div>
+          <span className="inline-flex items-center px-4 py-2 rounded-xl bg-[#111111] text-white text-[0.88rem] font-semibold tracking-tight">
+            Learn More →
+          </span>
+        </div>
+      )}
     </div>
   </motion.div>
 );
@@ -764,34 +770,23 @@ const FolderGraphic = () => (
 );
 
 const PainPoints = () => (
-  <section className="pt-28 pb-48 bg-page-bg relative z-20 rounded-t-[40px] md:rounded-t-[80px] shadow-[0_-20px_50px_-12px_rgba(0,0,0,0.1)] -mt-20">
+  <section className="pt-28 pb-48 bg-page-bg relative z-10 rounded-t-[40px] md:rounded-t-[80px] shadow-[0_-20px_50px_-12px_rgba(0,0,0,0.1)] -mt-20">
     <div className="max-w-7xl mx-auto px-6">
-      <SectionHeading title={<><span className="block">Every firm knows AI matters</span><span className="block">Most don't know where to <span className="inline-block font-serif italic font-bold text-[1.1em] bg-gradient-to-br from-[#2DAC65] via-[#34B36C] to-[#67CB53] bg-clip-text text-transparent p-[0.15em] -m-[0.15em]">start.</span></span></>} />
+      <SectionHeading centered={true} title={<><span className="block">Improve Your Customer Acquisition</span><span className="block mt-4">Using Our <span className="inline-block font-serif italic font-bold text-[1.1em] bg-gradient-to-br from-[#2DAC65] via-[#34B36C] to-[#67CB53] bg-clip-text text-transparent p-[0.15em] -m-[0.15em]">Proven AI Systems.</span></span></>} />
+      <p className="text-lg md:text-xl text-body text-center max-w-4xl mx-auto -mt-8 mb-16">
+        Stop wasting budget on AI that doesn't move the needle. We focus purely on the three systems that lower your customer acquisition cost: attracting customers, converting leads, and delivering your service faster.
+      </p>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-        <FeatureCard
-          delay={0.1}
-          badge="CHALLENGE 01"
-          graphic={<ToolsGraphic />}
-          title="Too Many Tools, No Clear Path"
-          description="Thousands of AI tools exist. We audit your workflows, find which specific tools actually move the needle, and implement custom agents. We make it simple and clear."
-        />
-
-        <FeatureCard
-          delay={0.2}
-          badge="CHALLENGE 02"
-          graphic={<PropTechGraphic />}
-          title="Where do I even begin?"
-          description="We pinpoint the highest-impact implementations, develop your strategy and give your team hands-on workshops with clear documentation, then so everyone's confident from day one."
-        />
-
-        <FeatureCard
-          delay={0.3}
-          badge="CHALLENGE 03"
-          graphic={<FolderGraphic />}
-          title="What About Data Privacy?"
-          description="We focus on systems that meet enterprise-grade standards such as GDPR and SOC 2 Type 2."
-        />
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+        {[
+          { title: "Attract New Customers",       learnMore: true, momentum: 9,  detail: 1.2, mountDelay: 0 },
+          { title: "Convert More Leads",          learnMore: true, momentum: 13, detail: 1.7, mountDelay: 4 },
+          { title: "Deliver Your Service Faster", learnMore: true, momentum: 18, detail: 2.4, mountDelay: 8 },
+        ].map((card, i) => (
+          <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.4, delay: i * 0.1 + 0.1 }}>
+            <FeatureCard {...card} />
+          </motion.div>
+        ))}
       </div>
     </div>
   </section>
@@ -1459,8 +1454,8 @@ const AboutPage = ({ setView }: { setView: (v: 'home' | 'about') => void }) => {
 const HomePage = () => (
   <main>
     <Hero />
-    <Integrations />
     <PainPoints />
+    <Integrations />
     <Timeline />
     <WhyNow />
     <Solution />
@@ -1503,8 +1498,8 @@ export default function App() {
       {view === 'home' ? (
         <main>
           <Hero />
-          <Integrations />
           <PainPoints />
+          <Integrations />
           <Timeline />
           <WhyNow />
           <Solution />
