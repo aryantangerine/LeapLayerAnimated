@@ -343,7 +343,7 @@ const Hero = () => {
             transition={{ duration: 0.8, delay: 1 }}
             className="text-[#3A3A3A]/80 text-lg md:text-[1.3rem] max-w-2xl lg:max-w-4xl mx-auto mb-10 leading-[1.5] font-semibold"
           >
-            We implement proven AI systems that attract new customers, convert leads, and give you<br className="hidden lg:block" />a strategy built for serious growth. Lead your market instead of playing catchup.
+            We implement proven <span className="text-[#1a1a1a]">AI systems</span> that attract <span className="text-[#1a1a1a]">new customers</span>, convert <span className="text-[#1a1a1a]">leads</span>, and give you<br className="hidden lg:block" />a <span className="text-[#1a1a1a]">strategy</span> built for serious growth. Lead your market instead of playing catchup.
           </motion.p>
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -580,8 +580,9 @@ const FeatureCard = ({
       </h3>
       {learnMore && (
         <div>
-          <span className="inline-flex items-center px-4 py-2 rounded-xl bg-[#111111] text-white text-[0.88rem] font-semibold tracking-tight">
-            Learn More →
+          <span className="group/btn relative overflow-hidden inline-flex items-center px-4 py-2 rounded-xl bg-[#111111] text-white text-[0.88rem] font-semibold tracking-tight cursor-pointer transition-all duration-300 hover:-translate-y-0.5 hover:scale-[1.05] hover:shadow-[0_8px_20px_rgba(0,0,0,0.25)]">
+            <span className="relative z-10">Learn More →</span>
+            <span className="absolute inset-0 -translate-x-[150%] skew-x-[-25deg] group-hover/btn:translate-x-[150%] transition-transform duration-700 ease-in-out bg-white/20" />
           </span>
         </div>
       )}
@@ -772,9 +773,9 @@ const FolderGraphic = () => (
 const PainPoints = () => (
   <section className="pt-28 pb-48 bg-page-bg relative z-10 rounded-t-[40px] md:rounded-t-[80px] shadow-[0_-20px_50px_-12px_rgba(0,0,0,0.1)] -mt-20">
     <div className="max-w-7xl mx-auto px-6">
-      <SectionHeading centered={true} title={<><span className="block">Improve Your Customer Acquisition</span><span className="block mt-4">Using Our <span className="inline-block font-serif italic font-bold text-[1.1em] bg-gradient-to-br from-[#2DAC65] via-[#34B36C] to-[#67CB53] bg-clip-text text-transparent p-[0.15em] -m-[0.15em]">Proven AI Systems.</span></span></>} />
-      <p className="text-lg md:text-xl text-body text-center max-w-4xl mx-auto -mt-8 mb-16">
-        Stop wasting budget on AI that doesn't move the needle. We focus purely on the three systems that lower your customer acquisition cost: attracting customers, converting leads, and delivering your service faster.
+      <SectionHeading centered={true} title={<><span className="block">Improve Your Customer Acquisition</span><span className="block mt-4">Using Our <motion.span className="inline-block font-serif italic font-bold text-[1.1em] bg-clip-text text-transparent p-[0.15em] -m-[0.15em]" style={{ backgroundImage: 'linear-gradient(90deg, #2DAC65 0%, #34B36C 30%, #67CB53 40%, rgba(255,255,255,0.5) 50%, #67CB53 60%, #34B36C 70%, #2DAC65 100%)', backgroundSize: '250% 100%' }} animate={{ backgroundPosition: ['100% center', '0% center'] }} transition={{ duration: 2.5, repeat: Infinity, repeatDelay: 3, ease: 'easeInOut' }}>Proven AI Systems.</motion.span></span></>} />
+      <p className="text-lg md:text-[1.3rem] font-semibold text-[#3A3A3A]/80 text-center max-w-5xl mx-auto -mt-8 mb-16 leading-[1.5]">
+        Stop wasting budget on AI that doesn't move the needle. We focus purely on the three systems that lower your customer acquisition cost: <span className="text-[#1a1a1a]">attracting customers</span>, <span className="text-[#1a1a1a]">converting leads</span>, and <span className="text-[#1a1a1a]">delivering your service faster</span>.
       </p>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
